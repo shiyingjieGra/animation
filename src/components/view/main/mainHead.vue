@@ -10,17 +10,20 @@
     </template>
     <template #start>
       <b-navbar-item href="#">
-        Home
+        主页
       </b-navbar-item>
       <b-navbar-item href="#">
-        Documentation
+        动画展示
       </b-navbar-item>
-      <b-navbar-dropdown label="Info">
+      <b-navbar-item href="#">
+        模型
+      </b-navbar-item>
+      <b-navbar-dropdown label="关于我们">
         <b-navbar-item href="#">
-          About
+          我们为什么做这个
         </b-navbar-item>
         <b-navbar-item href="#">
-          Contact
+          我们怎么做这个
         </b-navbar-item>
       </b-navbar-dropdown>
     </template>
