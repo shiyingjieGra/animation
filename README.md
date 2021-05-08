@@ -1,6 +1,6 @@
 # canvas
 
-> this is a canvas animation project for three
+> this is a canvas animation project for three.js
 
 ## Build Setup
 
