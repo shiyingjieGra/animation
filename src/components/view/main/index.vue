@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="body">
     <main-head></main-head>
-    <div class="body">
+    <div class="content">
       <keep-alive>
         <component :is="nowPage"></component>
       </keep-alive>
@@ -10,9 +10,7 @@
 </template>
 
 <script>
-import contentBody from './contentBody'
 import mainHead from './mainHead'
-import manuLeft from './manuLeft'
 import homepage from '../homepage/index'
 import animation from '../animation/index'
 import model from '../model/index'
@@ -27,8 +25,6 @@ export default {
   },
   components: {
     mainHead,
-    contentBody,
-    manuLeft,
     homepage,
     animation,
     model,
@@ -47,6 +43,9 @@ export default {
 
 <style scoped lang="less">
 .body {
-  height: 1000px;
+  height: calc(100vh - 84px);
+  .content {
+    height: calc(100vh - 84px);
+  }
 }
 </style>
