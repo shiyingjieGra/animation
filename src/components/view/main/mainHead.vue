@@ -65,6 +65,11 @@ export default {
               name: '怎么做这个',
               value: 'how',
               subMenu: 0
+            },
+            {
+              name: '教程',
+              value: 'tutorials',
+              subMenu: 0
             }
           ]
         }

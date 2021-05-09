@@ -16,6 +16,7 @@ import animation from '../animation/index'
 import model from '../model/index'
 import why from '../why/index'
 import how from '../how/index'
+import tutorials from '../tutorials/index'
 
 export default {
   computed: {
@@ -29,7 +30,8 @@ export default {
     animation,
     model,
     why,
-    how
+    how,
+    tutorials
   },
   mounted() {
     console.log(this.$store)

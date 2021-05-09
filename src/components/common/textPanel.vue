@@ -1,17 +1,21 @@
 <template>
-  <div slot="why">
     <div v-html="html"></div>
-  </div>
 </template>
 
 <script>
 
 export default {
+  props: {
+    url: {
+      default: ''
+    },
+  },
   mounted() {
+    console.log(this.url)
   },
   data() {
     return {
-      html: require('html-loader!@/source/why.html')
+      html: require('html-loader!' + this.url)
     }
   }
 }
