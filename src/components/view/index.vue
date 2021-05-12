@@ -10,13 +10,13 @@
 </template>
 
 <script>
-import mainHead from './mainHead'
-import homepage from '../homepage/index'
-import animation from '../animation/index'
-import model from '../model/index'
-import why from '../why/index'
-import how from '../how/index'
-import tutorials from '../tutorials/index'
+import mainHead from './main/mainHead'
+import homepage from './homepage/index'
+import animation from './animation/index'
+import model from './model/index'
+import why from './why/index'
+import how from './how/index'
+import tutorials from './tutorials/index'
 
 export default {
   computed: {
