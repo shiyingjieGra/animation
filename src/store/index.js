@@ -5,14 +5,19 @@ Vue.use(Vuex)
 
 const mainStore = new Vuex.Store({
   state: {
-    pageIndex: 'homepage'
+    pageIndex: 'homepage',
+    animationUrl: ''
   },
   getters: {
-    getPageIndex: state => state.pageIndex
+    getPageIndex: state => state.pageIndex,
+    getAnimationUrl: state => state.animationUrl
   },
   mutations: {
     handlePageList (state, res) {
       state.pageIndex = res
+    },
+    handleAnimationUrl (state, res) {
+      state.animationUrl = res
     }
   },
   actions: {}

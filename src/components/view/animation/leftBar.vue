@@ -10,7 +10,7 @@
         :class="animation.id === activeId ? 'active' : ''"
         @click="changeActive(animation)"
       >
-        <img :src="animation.url" />
+        <img :src="animation.imageUrl" />
         <p class="description">animation/{{ animation.text }}</p>
       </li>
     </ul>
@@ -26,44 +26,67 @@ export default {
       animationList: [
         {
           id: 1,
-          url: 'http://localhost:3000/images/bear.jpg',
+          imageUrl: 'https://threejs.org/examples/screenshots/webgl_animation_cloth.jpg',
+          htmlUrl: 'https://threejs.org/examples/webgl_animation_cloth.html',
           text: 'test1111'
         },
         {
           id: 2,
-          url: 'http://localhost:3000/images/bear.jpg',
+          imageUrl: 'https://threejs.org/examples/screenshots/webgl_animation_keyframes.jpg',
+          htmlUrl: 'https://threejs.org/examples/webgl_animation_keyframes.html',
           text: 'test'
         },
         {
           id: 3,
-          url: 'http://localhost:3000/images/bear.jpg',
+          imageUrl: 'https://threejs.org/examples/screenshots/webgl_animation_skinning_blending.jpg',
+          htmlUrl: 'https://threejs.org/examples/webgl_animation_skinning_blending.html',
           text: 'test'
         },
         {
           id: 4,
-          url: 'http://localhost:3000/images/bear.jpg',
+          imageUrl: 'https://threejs.org/examples/screenshots/webgl_animation_skinning_additive_blending.jpg',
+          htmlUrl: 'https://threejs.org/examples/webgl_animation_skinning_additive_blending.html',
+          text: 'test'
+        },
+        {
+          id: 5,
+          imageUrl: 'http://localhost:80/images/bear.jpg',
+          htmlUrl: 'http://127.0.0.1/pages/views/index.html',
           text: 'test'
         }
       ]
     }
   },
+  mounted() {
+    if (this.animationList.length) {
+      this.$store.commit('handleAnimationUrl', this.animationList[0].htmlUrl)
+    }
+  },
   methods: {
     changeActive(item) {
       this.activeId = item.id
+      this.$store.commit('handleAnimationUrl', item.htmlUrl)
     }
   }
 }
 </script>
 <style lang="less" scoped>
 .menu {
+  padding-right: 5px;
+  height: 98%;
   .title {
     font-size: 18px;
     margin-left: 15px;
     padding-top: 20px;
   }
   .menu-list {
+    height: calc(100% - 40px);
+    overflow-y: scroll;
+    list-style: none;
+    margin-left: 1em;
     li {
       margin-bottom: 10px;
+      margin-right: 5px;
 
       img {
         border-radius: 5px;
@@ -84,10 +107,6 @@ export default {
       text-decoration: none;
       border: 1px solid #049ef4;
     }
-  }
-  ul {
-    list-style: none;
-    margin-left: 1em;
   }
 }
 </style>

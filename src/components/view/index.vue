@@ -19,6 +19,7 @@ import how from './how/index'
 import tutorials from './tutorials/index'
 
 export default {
+  name: 'main',
   computed: {
     nowPage() {
       return this.$store.state.pageIndex

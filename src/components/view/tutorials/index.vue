@@ -15,7 +15,7 @@ export default {
   },
   data() {
     return {
-      url: 'http://localhost:3000/package/canvas与动画/canvas动画.html'
+      url: 'http://localhost/pages/canvas与动画/canvas动画.html'
     }
   }
 }

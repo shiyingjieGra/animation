@@ -1,7 +1,18 @@
 <template>
   <div class="html-panel-content">
     <b-loading :is-full-page="true" v-model="loading"></b-loading>
-    <iframe class="show-iframe" :src="url"></iframe>
+    <iframe
+      ref="iframe"
+      allowfullscreen="true"
+      class="show-iframe"
+      :src="url"
+    ></iframe>
+    <b-button
+      class="full-screen-content is-success is-light"
+      ref="fullSrceenButton"
+      @click="fullScreen"
+      >全屏查看</b-button
+    >
   </div>
 </template>
 
@@ -29,7 +40,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.url)
     this.load(this.url)
   },
   methods: {
@@ -53,6 +63,20 @@ export default {
             this.html = '加载失败'
           })
       }
+    },
+    fullScreen() {
+      this.openFullscreen(this.$refs.iframe)
+    },
+    openFullscreen(element) {
+      if (element.requestFullscreen) {
+        element.requestFullscreen()
+      } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen()
+      } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen()
+      } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullScreen()
+      }
     }
   }
 }
@@ -60,6 +84,7 @@ export default {
 <style lang="less" scoped>
 .html-panel-content {
   height: 100%;
+  position: relative;
   .show-iframe {
     height: 100%;
     width: 100%;
@@ -79,6 +104,11 @@ export default {
       background: #ededed;
       border-radius: 5px;
     }
+  }
+  .full-screen-content {
+    position: absolute;
+    top: 20px;
+    left: -100px;
   }
 }
 </style>
