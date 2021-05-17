@@ -57,8 +57,8 @@ export default {
       this.addModel()
 
       // 构建坐标轴
-      let axes = new Three.AxesHelper(20)
-      this.scene.add(axes)
+      // let axes = new Three.AxesHelper(20)
+      // this.scene.add(axes)
 
       // 渲染视图视角
       this.camera.position.x = -30
@@ -124,8 +124,6 @@ export default {
                 child.material.needsUpdate = true
                 // 重点，没有该句会导致PNG无法正确显示透明效果
                 child.material.transparent = true
-                child.geometry.computeFaceNormals()
-                child.geometry.computeVertexNormals()
                 child.material.shading = Three.SmoothShading
               }
             })
