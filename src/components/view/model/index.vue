@@ -42,7 +42,7 @@ export default {
 
       this.scene.add(this.mesh)
 
-      this.renderer = new Three.WebGLRenderer({ antialias: true })
+      this.renderer = new Three.WebGLRenderer({ antialias: true, alpha: true })
       // 设置窗口背景颜色为黑
       this.renderer.setClearColor(new Three.Color(0x000000))
       this.renderer.setSize(container.clientWidth, container.clientHeight)
@@ -52,27 +52,7 @@ export default {
 
       this.addLight()
 
-      // 创建控件并绑定在相机上
-      this.trackballControls = new TrackballControls(this.camera, container)
-      this.trackballControls.rotateSpeed = 3.0
-      this.trackballControls.zoomSpeed = 3.0
-      this.trackballControls.panSpeed = 3.0
-      this.trackballControls.noZoom = false
-      this.trackballControls.noPan = false
-      this.trackballControls.staticMoving = true
-      this.trackballControls.dynamicDampingFactor = 0.3
-
-      // 设置遮阳板
-      // 加载纹理
-      this.texture = new Three.Texture()
-      // 加载图片
-      let imgLoader = new Three.ImageLoader()
-      // imgLoader.setCrossOrigin('anonymous')
-      imgLoader.load('http://localhost:80/images/bear.jpg', function(img) {
-        // 将图片值赋于纹理
-        that.texture.image = img
-        that.texture.needsUpdate = true
-      })
+      this.addtrackballControls()
 
       this.addModel()
 
@@ -94,7 +74,7 @@ export default {
       this.spotLight = new Three.SpotLight(0xffffff)
       this.spotLight.position.set(-10, 20, 10)
       this.spotLight.castShadow = true
-      this.scene.add(this.spotLight)
+      // this.scene.add(this.spotLight)
 
       // 平行光
       this.light = new Three.DirectionalLight(0xffffff)
@@ -108,6 +88,20 @@ export default {
       this.scene.add(this.light2)
     },
     addModel() {
+      // 设置遮阳板
+      // 加载纹理
+      this.texture = new Three.Texture()
+      // 加载图片
+      let imgLoader = new Three.ImageLoader()
+      // imgLoader.setCrossOrigin('anonymous')
+      imgLoader.load('http://localhost:80/model/cat/texture/cat1.jpg', function(
+        img
+      ) {
+        // 将图片值赋于纹理
+        that.texture.image = img
+        that.texture.needsUpdate = true
+      })
+
       let mtlLoader = new MTLLoader()
       let that = this
       mtlLoader.setCrossOrigin('anonymous')
@@ -116,7 +110,7 @@ export default {
         materials.preload()
 
         let objLoader = new OBJLoader()
-        objLoader.setMaterials(materials)
+        // objLoader.setMaterials(materials)
         objLoader.setPath('http://localhost:80/model/cat/')
         objLoader.transparent = true
         objLoader.load(
@@ -127,8 +121,12 @@ export default {
               if (child instanceof Three.Mesh) {
                 // 将贴图赋于材质
                 child.material.map = that.texture
+                child.material.needsUpdate = true
                 // 重点，没有该句会导致PNG无法正确显示透明效果
                 child.material.transparent = true
+                child.geometry.computeFaceNormals()
+                child.geometry.computeVertexNormals()
+                child.material.shading = Three.SmoothShading
               }
             })
             object.position.y = 0
@@ -148,6 +146,18 @@ export default {
       this.trackballControls.update(delta)
       requestAnimationFrame(this.renderScene)
       this.renderer.render(this.scene, this.camera)
+    },
+    addtrackballControls() {
+      let container = document.getElementById('container')
+      // 创建控件并绑定在相机上
+      this.trackballControls = new TrackballControls(this.camera, container)
+      this.trackballControls.rotateSpeed = 3.0
+      this.trackballControls.zoomSpeed = 3.0
+      this.trackballControls.panSpeed = 3.0
+      this.trackballControls.noZoom = false
+      this.trackballControls.noPan = false
+      this.trackballControls.staticMoving = false
+      this.trackballControls.dynamicDampingFactor = 0.2
     },
     onProgress(xhr) {
       // if (xhr.lengthComputable) {
