@@ -1,11 +1,30 @@
 <template>
-  <div id="container"></div>
+  <div class="model-container">
+    <div id="container"></div>
+    <b-carousel-list
+      class="show-panel"
+      v-model="values"
+      :data="modelList"
+      :arrow="true"
+      :arrow-hover="true"
+      :items-to-show="modelList.length > 6 ? 6 : modelList.length"
+      :items-to-list="1"
+      :repeat="false"
+      :has-drag="true"
+      :has-grayscale="true"
+      :has-opacity="false"
+      @switch="changeSwitch($event)"
+      as-indicator
+    />
+  </div>
 </template>
 
 <script>
 import * as Three from 'three'
 import { OBJLoader, MTLLoader } from 'three-obj-mtl-loader'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls.js'
+import { addFbxModel, addMtlModel } from '../../../utils/create3DModel'
 
 export default {
   name: 'model',
@@ -20,7 +39,53 @@ export default {
       light2: null,
       pMaterial: null,
       trackballControls: null,
-      texture: null
+      texture: null,
+      values: 0,
+      selectedModel: {},
+      modelGroup: new Three.Group(),
+      modelList: [
+        {
+          id: 0,
+          image: 'http://localhost:80/model/cat/cat.jpg',
+          modelType: 'fbx',
+          modelObj: 'http://localhost:80/model/cat/cat.FBX',
+          modelMtl: '',
+          texture: 'http://localhost:80/model/cat/texture/cat1.jpg',
+          hasTexture: true
+        },
+        {
+          id: 1,
+          image: 'http://localhost:80/model/women/women.png',
+          modelType: 'fbx',
+          modelObj: 'http://localhost:80/model/women/Godess_of_war.FBX',
+          modelMtl: '',
+          texture: '',
+          hasTexture: false
+        },
+        {
+          id: 2,
+          image: 'http://localhost:80/model/cow/Cow render1.jpg',
+          modelType: 'fbx',
+          modelObj: 'http://localhost:80/model/cow/Cow fbx.FBX',
+          modelMtl: '',
+          texture: 'http://localhost:80/model/cow/Cow color.jpg',
+          hasTexture: true
+        },
+        {
+          id: 3,
+          image: 'http://localhost:80/model/cat/cat.jpg',
+          modelType: 'object',
+          modelObj: 'http://localhost:80/model/cat/cat.obj',
+          modelMtl: 'http://localhost:80/model/cat/cat.mtl',
+          texture: 'http://localhost:80/model/cat/texture/cat1.jpg',
+          hasTexture: true
+        }
+      ]
+    }
+  },
+  watch: {
+    selectedModel(value) {
+      this.initModel(value)
     }
   },
   methods: {
@@ -54,7 +119,11 @@ export default {
 
       this.addtrackballControls()
 
-      this.addModel()
+      // this.addFbxModel()
+      addFbxModel({}, function(object) {
+        that.modelGroup.add(object)
+        that.scene.add(that.modelGroup)
+      })
 
       // 构建坐标轴
       // let axes = new Three.AxesHelper(20)
@@ -74,7 +143,7 @@ export default {
       this.spotLight = new Three.SpotLight(0xffffff)
       this.spotLight.position.set(-10, 20, 10)
       this.spotLight.castShadow = true
-      // this.scene.add(this.spotLight)
+      this.scene.add(this.spotLight)
 
       // 平行光
       this.light = new Three.DirectionalLight(0xffffff)
@@ -84,10 +153,29 @@ export default {
 
       // 环境光
       this.light2 = new Three.AmbientLight(0x999999)
-      this.light2.castShadow = true
       this.scene.add(this.light2)
     },
-    addModel() {
+    initModel(modelParam) {
+      let that = this
+      switch (modelParam.modelType) {
+        case 'fbx':
+          addFbxModel(modelParam, function(object) {
+            that.modelGroup.add(object)
+            that.scene.add(that.modelGroup)
+          })
+          break
+        case 'object':
+          addMtlModel(modelParam, function(object) {
+            that.modelGroup.add(object)
+            that.scene.add(that.modelGroup)
+          })
+          break
+      }
+    },
+    addMtlModel() {
+      let that = this
+      let mtlLoader = new MTLLoader()
+
       // 设置遮阳板
       // 加载纹理
       this.texture = new Three.Texture()
@@ -101,9 +189,6 @@ export default {
         that.texture.image = img
         that.texture.needsUpdate = true
       })
-
-      let mtlLoader = new MTLLoader()
-      let that = this
       mtlLoader.setCrossOrigin('anonymous')
       mtlLoader.setPath('http://localhost:80/model/cat/')
       mtlLoader.load('cat.mtl', function(materials) {
@@ -138,6 +223,41 @@ export default {
         )
       })
     },
+    addFbxModel() {
+      let that = this
+
+      this.texture = new Three.Texture()
+      // 加载图片
+      let imgLoader = new Three.ImageLoader()
+      // imgLoader.setCrossOrigin('anonymous')
+      imgLoader.load('http://localhost:80/model/cow/Cow color.jpg', function(
+        img
+      ) {
+        // 将图片值赋于纹理
+        that.texture.image = img
+        that.texture.needsUpdate = true
+      })
+
+      var fbxLoader = new FBXLoader()
+      fbxLoader.setCrossOrigin('anonymous')
+      fbxLoader.load(
+        'http://localhost:80/model/women/Godess_of_war.FBX',
+        function(object) {
+          // 加载路径fbx文件
+          object.traverse(function(child) {
+            if (child.isMesh) {
+              child.castShadow = true
+              child.receiveShadow = true
+              // child.material.map = that.texture
+              child.material.needsUpdate = true
+            }
+          })
+          object.scale.set(0.01, 0.01, 0.01)
+          // 模型
+          that.scene.add(object)
+        }
+      )
+    },
     renderScene() {
       var clock = new Three.Clock()
       var delta = clock.getDelta()
@@ -164,15 +284,55 @@ export default {
       //   percent.innerText = Math.round(percentComplete, 2) + '% 已经加载'
       // }
     },
-    onError(xhr) {}
+    onError(xhr) {},
+    changeSwitch(event) {
+      this.values = event
+      this.modelGroup.traverse(function(obj) {
+        if (obj.type === 'Mesh') {
+          obj.geometry.dispose()
+          obj.material.dispose()
+        }
+      })
+      // 删除场景对象scene的子对象group
+      this.scene.remove(this.modelGroup)
+      this.modelGroup = new Three.Group()
+      this.selectedModel = this.modelList[event]
+    }
   },
   mounted() {
+    this.selectedModel = this.modelList[0] ? this.modelList[0] : {}
     this.init()
   }
 }
 </script>
-<style scoped>
-#container {
+<style lang="less" scoped>
+.model-container {
   height: 100%;
+  #container {
+    height: 100%;
+  }
+  .show-panel {
+    position: absolute;
+    bottom: 35px;
+    width: 59%;
+    height: 105px;
+    left: 20%;
+    /deep/ .carousel-slide {
+      width: 150px !important;
+      .b-image-wrapper {
+        margin-left: 8px;
+        margin-right: 8px;
+        img {
+          width: 150px;
+          height: 100px !important;
+        }
+      }
+    }
+    /deep/ .is-active {
+      img {
+        border: 3px solid #684dd4fa;
+      }
+    }
+  }
 }
 </style>
